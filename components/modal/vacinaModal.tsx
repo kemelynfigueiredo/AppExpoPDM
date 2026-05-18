@@ -1,18 +1,38 @@
-import React, { useState } from "react";
-import {View, Text, Modal, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+// components/modal/vacinaModal.tsx
+
+import React, { useEffect, useState } from "react";
+
+import {
+  View,
+  Text,
+  Modal,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+
+import { Vacina } from "../interfaces/IVacina";
 
 export type VacinaModalProps = {
-  visible: boolean,
-  onAdd: (vacina:{ 
-    nomeVacina: string,
-    dataAplicacao: string,
-    dataReforco: string,
-    veterinario: string,
-    lote: string,
-    nomeGato: string, }) => void;
+  visible: boolean;
+
+  vacina?: Vacina | null;
+
+  onAdd: (vacina: Omit<Vacina, "id">) => void;
+
+  onEdit: (vacina: Vacina) => void;
+
   onCancel: () => void;
-}
-export default function VacinaModal({ visible, onAdd, onCancel }: VacinaModalProps) {
+};
+
+export default function VacinaModal({
+  visible,
+  vacina,
+  onAdd,
+  onEdit,
+  onCancel,
+}: VacinaModalProps) {
+
   const [nomeVacina, setNomeVacina] = useState("");
   const [dataAplicacao, setDataAplicacao] = useState("");
   const [dataReforco, setDataReforco] = useState("");
@@ -20,130 +40,206 @@ export default function VacinaModal({ visible, onAdd, onCancel }: VacinaModalPro
   const [lote, setLote] = useState("");
   const [nomeGato, setNomeGato] = useState("");
 
+  useEffect(() => {
+
+    if (vacina) {
+      setNomeVacina(vacina.nomeVacina);
+      setDataAplicacao(vacina.dataAplicacao);
+      setDataReforco(vacina.dataReforco);
+      setVeterinario(vacina.veterinario);
+      setLote(vacina.lote);
+      setNomeGato(vacina.nomeGato);
+    }
+
+    else {
+      limparCampos();
+    }
+
+  }, [vacina]);
+
+  const limparCampos = () => {
+    setNomeVacina("");
+    setDataAplicacao("");
+    setDataReforco("");
+    setVeterinario("");
+    setLote("");
+    setNomeGato("");
+  };
+
+  const salvar = () => {
+
+    const dados = {
+      nomeVacina,
+      dataAplicacao,
+      dataReforco,
+      veterinario,
+      lote,
+      nomeGato,
+    };
+
+    // UPDATE
+    if (vacina) {
+
+      onEdit({
+        id: vacina.id,
+        ...dados,
+      });
+
+    }
+
+    // CREATE
+    else {
+
+      onAdd(dados);
+
+    }
+
+    limparCampos();
+  };
 
   return (
-    <Modal visible={visible} animationType='fade' transparent= {true} onRequestClose= {() => {}}>
+    <Modal
+      visible={visible}
+      animationType="fade"
+      transparent={true}
+    >
+
       <View style={styles.container}>
+
         <View style={styles.boxContainer}>
+
+          <Text style={styles.title}>
+            {vacina ? "Editar Vacina" : "Cadastrar Vacina"}
+          </Text>
+
           <TextInput
-            placeholder="Nome"
+            placeholder="Nome da Vacina"
             style={styles.boxInput}
             value={nomeVacina}
-            onChangeText={text=> setNomeVacina(text)}
-            autoFocus
+            onChangeText={setNomeVacina}
           />
 
           <TextInput
             placeholder="Data Aplicação"
             style={styles.boxInput}
             value={dataAplicacao}
-            onChangeText={text=> setDataAplicacao(text)}
-            keyboardType="numeric"
+            onChangeText={setDataAplicacao}
           />
 
           <TextInput
             placeholder="Data Reforço"
             style={styles.boxInput}
             value={dataReforco}
-            onChangeText={text=> setDataReforco(text)}
-            keyboardType="numeric"
+            onChangeText={setDataReforco}
           />
 
           <TextInput
-            placeholder="veterinário"
+            placeholder="Veterinário"
             style={styles.boxInput}
             value={veterinario}
-            onChangeText={text=> setVeterinario(text)}
+            onChangeText={setVeterinario}
           />
+
           <TextInput
-            placeholder="Lote Vacina"
+            placeholder="Lote"
             style={styles.boxInput}
             value={lote}
-            onChangeText={text=> setLote(text)}
-            keyboardType="numeric"
+            onChangeText={setLote}
           />
 
           <TextInput
             placeholder="Nome do Gato"
             style={styles.boxInput}
             value={nomeGato}
-            onChangeText={text=> setNomeGato(text)}
+            onChangeText={setNomeGato}
           />
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.buttonAdd} onPress={() => onAdd(
-                {nomeVacina: nomeVacina, 
-                dataAplicacao: dataAplicacao, 
-                dataReforco: dataReforco,
-                veterinario: veterinario,
-                lote: lote,
-                nomeGato: nomeGato
-                 ,})}>
-            <Text style={styles.buttonText}>
-              Add
+
+            <TouchableOpacity
+              style={styles.buttonAdd}
+              onPress={salvar}
+            >
+              <Text style={styles.buttonText}>
+                {vacina ? "Salvar" : "Adicionar"}
               </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonCancel}
-            onPress={ () => onCancel()}
-          >
-            <Text style={styles.buttonText}>
-              Cancelar
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.buttonCancel}
+              onPress={() => {
+                limparCampos();
+                onCancel();
+              }}
+            >
+              <Text style={styles.buttonText}>
+                Cancelar
               </Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
 
           </View>
+
         </View>
+
       </View>
+
     </Modal>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    alignContent: 'center',
-    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.7)',
     flex: 1,
+    justifyContent: 'center',
   },
+
   boxContainer: {
     backgroundColor: '#FFF',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
     margin: 20,
+    borderRadius: 10,
+    padding: 20,
   },
-  buttonText: {
+
+  title: {
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#FFF',
+    marginBottom: 15,
+    textAlign: 'center',
   },
-  buttonAdd: {
-    backgroundColor: 'green',
+
+  boxInput: {
+    backgroundColor: '#DDD',
     borderRadius: 5,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 10,
-    padding: 20,
+    height: 45,
+    marginVertical: 5,
+    paddingHorizontal: 10,
   },
-  buttonCancel: {
-    backgroundColor: 'red',
-    borderRadius: 5,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 10,
-    padding: 20,
-  },
+
   buttonContainer: {
     flexDirection: 'row',
-    marginTop: 10,
-    height: 70,
+    marginTop: 15,
+    gap: 10,
   },
-  boxInput: {
-    alignSelf: 'stretch',
-    height: 40,
-    borderRadius: 5,
-    backgroundColor: '#DDD',
-    margin: 5,
+
+  buttonAdd: {
+    flex: 1,
+    backgroundColor: 'green',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+
+  buttonCancel: {
+    flex: 1,
+    backgroundColor: 'red',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+
+  buttonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
   },
 });
