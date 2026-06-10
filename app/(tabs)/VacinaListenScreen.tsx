@@ -1,6 +1,6 @@
 // app/vacina/VacinaListScreen.tsx
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Alert,
@@ -8,6 +8,8 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
 
 import MyScrollView from '@/components/MyScrollView';
 
@@ -28,21 +30,76 @@ export default function VacinaListScreen() {
   const [vacinaSelecionada, setVacinaSelecionada] =
     useState<Vacina | null>(null);
 
-  // CREATE
-  const onAdd = (vacina: Omit<Vacina, "id">) => {
+  const [location, setLocation] = useState({});
+  const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        const data = await AsyncStorage.getItem(
+          "@PDMApp:vacinas"
+        );
+
+        const vacinasData =
+          data != null ? JSON.parse(data) : [];
+
+        setVacinas(vacinasData);
+      } catch (e) {
+      }
+    }
+
+    getData();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { status } =
+        await Location.requestForegroundPermissionsAsync();
+
+      if (status !== 'granted') {
+        setErrorMsg(
+          'Permission to access location was denied'
+        );
+        return;
+      }
+
+      let location =
+        await Location.getCurrentPositionAsync({});
+
+      setLocation(location);
+    })();
+  }, []);
+
+  let text = 'Waiting...';
+
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location);
+  }
+
+  //criar
+  const onAdd = async (vacina: Omit<Vacina, "id">) => {
 
     const novaVacina: Vacina = {
       id: Math.random() * 1000,
       ...vacina,
     };
 
-    setVacinas([...vacinas, novaVacina]);
+    const novaLista = [...vacinas, novaVacina];
+
+    setVacinas(novaLista);
+
+    await AsyncStorage.setItem(
+      "@PDMApp:vacinas",
+      JSON.stringify(novaLista)
+    );
 
     setModalVisible(false);
   };
 
   // UPDATE
-  const onEdit = (vacinaAtualizada: Vacina) => {
+  const onEdit = async (vacinaAtualizada: Vacina) => {
 
     const novaLista = vacinas.map(v =>
       v.id === vacinaAtualizada.id
@@ -52,19 +109,28 @@ export default function VacinaListScreen() {
 
     setVacinas(novaLista);
 
-    setVacinaSelecionada(null);
+    await AsyncStorage.setItem(
+      "@PDMApp:vacinas",
+      JSON.stringify(novaLista)
+    );
 
+    setVacinaSelecionada(null);
     setModalVisible(false);
   };
 
   // DELETE
- const onDelete = (vacina: Vacina) => {
+  const onDelete = async (vacina: Vacina) => {
 
   const novaLista = vacinas.filter(
-    item => item !== vacina
+    item => item.id !== vacina.id
   );
 
   setVacinas(novaLista);
+
+  await AsyncStorage.setItem(
+    "@PDMApp:vacinas",
+    JSON.stringify(novaLista)
+  );
 };
 
   const openModal = () => {
@@ -145,19 +211,22 @@ const styles = StyleSheet.create({
 
   headerContainer: {
     alignItems: 'flex-end',
-    padding: 10,
+    padding: 20,
     top: 20,
     right: 20,
+    color: '#fff',
   },
 
   headerButton: {
-    fontSize: 30,
+    fontSize: 50,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: '#fff',
   },
 
   container: {
-    padding: 10,
+    padding: 15,
+    color: '#fff',
+    backgroundColor: '#fff',
   },
 
   headerImage: {

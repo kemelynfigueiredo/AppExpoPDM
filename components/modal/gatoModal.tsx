@@ -1,5 +1,3 @@
-// components/modal/gatoModal.tsx
-
 import React, {
   useEffect,
   useState,
@@ -39,11 +37,13 @@ export default function CatModal({
   onEdit,
   onCancel,
 }: CatModalProps) {
+  // Estados para os campos do formulário
 
   const [nome, setNome] = useState("");
   const [idade, setIdade] = useState("");
   const [raca, setRaca] = useState("");
 
+  // Preencher os campos do formulário quando o gato for selecionado para edição
   useEffect(() => {
 
     if (cat) {
@@ -62,6 +62,8 @@ export default function CatModal({
 
   }, [cat]);
 
+// Limpar os campos do formulário quando o modal for fechado ou quando um novo gato for selecionado para criação
+
   const limparCampos = () => {
 
     setNome("");
@@ -79,15 +81,14 @@ export default function CatModal({
 
     // UPDATE
     if (cat) {
-
+//      Passar o id do gato junto com os dados atualizados para a função onEdit
       onEdit({
         id: cat.id,
         ...dados,
       });
 
     }
-
-    // CREATE
+// Criar um novo gato passando os dados para a função onAdd
     else {
 
       onAdd(dados);
@@ -96,7 +97,7 @@ export default function CatModal({
 
     limparCampos();
   };
-
+// Renderizar o modal com os campos de entrada e os botões de salvar e cancelar
   return (
 
     <Modal
@@ -177,7 +178,7 @@ export default function CatModal({
 const styles = StyleSheet.create({
 
   container: {
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: 'rgba(254, 254, 254, 0.7)',
     justifyContent: 'center',
     flex: 1,
   },
@@ -190,10 +191,11 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 22,
+    fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 15,
     textAlign: 'center',
+    color: '#FFF',
   },
 
   buttonText: {
