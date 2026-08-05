@@ -19,22 +19,22 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Início',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="CatListenScreen"
         options={{
-          title: 'Explore',
+          title: 'Gatos',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="CatListScreen"
+        name="VacinaListenScreen"
         options={{
-          title: 'Cat',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color}/>
+          title: 'Vacinas',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
     </Tabs>

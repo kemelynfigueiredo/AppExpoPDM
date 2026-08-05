@@ -1,13 +1,13 @@
-import type { PropsWithChildren, ReactElement} from 'react';
+import type { PropsWithChildren, ReactElement } from 'react';
 import {
-  StyleSheet, useColorScheme
+    StyleSheet, useColorScheme
 } from 'react-native';
 
 import Animated, {
-  interpolate,
-  useAnimatedRef,
-  useAnimatedStyle,
-  useScrollViewOffset,
+    interpolate,
+    useAnimatedRef,
+    useAnimatedStyle,
+    useScrollViewOffset,
 } from 'react-native-reanimated';
 
 import { ThemedView } from '@/components/themed-view';
@@ -61,6 +61,7 @@ export default function MyScrollView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#ffffff',
   },
 
   header: {

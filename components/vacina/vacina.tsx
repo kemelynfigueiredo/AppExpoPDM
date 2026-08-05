@@ -1,10 +1,10 @@
 import React from 'react';
 
 import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 import { Vacina } from '../interfaces/IVacina';
@@ -78,43 +78,49 @@ export default function VacinaItem({
 
 const styles = StyleSheet.create({
   box: {
-    backgroundColor: '#FFF',
-    padding: 15,
-    margin: 10,
-    borderRadius: 10,
-    elevation: 3,
+    backgroundColor: '#ffffff',
+    padding: 16,
+    marginVertical: 8,
+    borderRadius: 18,
+    elevation: 0,
+    shadowColor: '#9aa8c7',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    borderWidth: 0,
   },
 
   nome: {
     fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontWeight: '700',
+    color: '#1f2a44',
+    marginBottom: 6,
   },
 
   buttonContainer: {
     flexDirection: 'row',
-    marginTop: 15,
+    marginTop: 14,
     gap: 10,
   },
 
   editButton: {
     flex: 1,
-    backgroundColor: '#3498db',
-    padding: 12,
-    borderRadius: 8,
+    backgroundColor: '#4f8cff',
+    paddingVertical: 10,
+    borderRadius: 999,
     alignItems: 'center',
   },
 
   deleteButton: {
     flex: 1,
-    backgroundColor: '#e74c3c',
-    padding: 12,
-    borderRadius: 8,
+    backgroundColor: '#ff7aa2',
+    paddingVertical: 10,
+    borderRadius: 999,
     alignItems: 'center',
   },
 
   buttonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
+    color: '#ffffff',
+    fontWeight: '700',
   },
 });
